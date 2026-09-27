@@ -120,6 +120,14 @@ describe("fetchPage", () => {
     expect(err.code).toBe("timeout");
   });
 
+  it("times out a DNS lookup that never answers", async () => {
+    const hang: Resolver = () => new Promise(() => {});
+    const started = Date.now();
+    const err = await fail(fetchPage("http://site.example/ok", opts({ resolver: hang, limits: { timeoutMs: 300 } })));
+    expect(err.code).toBe("timeout");
+    expect(Date.now() - started).toBeLessThan(2000);
+  });
+
   it("follows a same-site redirect and records it", async () => {
     const page = await fetchPage("http://site.example/redirect?to=/ok", opts());
     expect(page.finalUrl).toBe("http://site.example/ok");

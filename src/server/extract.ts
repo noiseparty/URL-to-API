@@ -309,6 +309,9 @@ const SKIP_ITEMS = new Set(["script", "style", "head", "option", "br", "hr", "me
 const SKIP_PARENTS = new Set(["script", "style", "head", "select", "svg", "g", "tr", "colgroup"]);
 /** Page chrome. Lists inside it are real but rarely what anyone came for, so they rank lower. */
 const CHROME = "nav, header, footer, aside, [role=navigation], [role=banner], [role=contentinfo]";
+/** Scholarly apparatus: reference lists, navboxes, tables of contents. Long and text-heavy, so
+ *  they would otherwise outrank the article content they annotate. Ranked lower still. */
+const APPARATUS = ".references, .reflist, .refbegin, .mw-references-wrap, .navbox, .catlinks, .toc, #toc, .sidebar, .footnotes, [role=doc-endnotes]";
 
 export function signature(el: Element): string {
   const classes = (el.attribs.class ?? "")
@@ -363,12 +366,14 @@ function extractLists($: $, base: string): ListOut[] {
       // groups whose records are single bare links (menus) rather than composite cards.
       const composite = filled.filter((r) => r.links.length + r.images.length > 1 || r.text.length > 60).length;
       const chrome = $(g.parent).closest(CHROME).length > 0 ? 0.25 : 1;
+      // Apparatus sorts after everything else regardless of size.
+      const tier = $(g.parent).closest(APPARATUS).length > 0 ? 1 : 0;
       const score = chrome * textLen * (distinct / Math.max(filled.length, 1)) * (1 + composite / Math.max(filled.length, 1));
-      return { g, records: filled, score };
+      return { g, records: filled, score, tier };
     })
     .filter((s) => s.records.length >= 3 && s.score > 0);
 
-  scored.sort((a, b) => b.score - a.score);
+  scored.sort((a, b) => a.tier - b.tier || b.score - a.score);
 
   // Drop a group nested inside an already-chosen group's items: the outer records
   // already contain its text, so it would be the same data twice.

@@ -78,7 +78,9 @@ export async function fetchPage(input: string, opts: FetchOptions = {}): Promise
     for (let hop = 0; ; hop++) {
       let target: Awaited<ReturnType<typeof vetWith>>;
       try {
-        target = await vetWith(current, opts.resolver, allow);
+        // DNS is not abortable, so race it against the overall deadline: a resolver that
+        // hangs must not hold a concurrency slot past the 8 s budget.
+        target = await raceAbort(vetWith(current, opts.resolver, allow), controller.signal);
       } catch (err) {
         if (hop > 0 && err instanceof GuardError) {
           throw new GuardError(err.code, `The page redirected to ${current.slice(0, 200)}, which is blocked. ${err.message}`);
@@ -141,6 +143,24 @@ export async function fetchPage(input: string, opts: FetchOptions = {}): Promise
   } finally {
     clearTimeout(timer);
   }
+}
+
+function raceAbort<T>(p: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) return Promise.reject(new Error("aborted"));
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(new Error("aborted"));
+    signal.addEventListener("abort", onAbort, { once: true });
+    p.then(
+      (v) => {
+        signal.removeEventListener("abort", onAbort);
+        resolve(v);
+      },
+      (e) => {
+        signal.removeEventListener("abort", onAbort);
+        reject(e);
+      },
+    );
+  });
 }
 
 function isCapError(err: unknown) {

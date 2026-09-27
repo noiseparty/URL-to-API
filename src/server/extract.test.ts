@@ -78,6 +78,14 @@ describe("repeated structures", () => {
     expect(lists[0]!.records[0]!.text).toContain("story");
   });
 
+  it("ranks a long reference list below the article's own lists", () => {
+    const refs = Array.from({ length: 40 }, (_, i) => `<li id="cite_note-${i}">Author ${i}. "A long citation title number ${i}". Journal of Things, retrieved 2026.</li>`).join("");
+    const cities = Array.from({ length: 5 }, (_, i) => `<li><a href="/c${i}">City ${i}</a> — a city of note with a population figure</li>`).join("");
+    const html = page(`<main><ul>${cities}</ul><div class="reflist"><ol class="references">${refs}</ol></div></main>`);
+    const { lists } = extract(html, "https://e.com/");
+    expect(lists[0]!.records[0]!.text).toContain("City 0");
+  });
+
   it("finds classed table rows (Hacker News style)", () => {
     const rows = [1, 2, 3]
       .map((i) => `<tr class="athing"><td>${i}.</td><td><a href="item?id=${i}">Story ${i}</a></td></tr><tr><td></td><td>${i} points</td></tr>`)
