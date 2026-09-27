@@ -6,15 +6,15 @@ title, meta, OpenGraph, JSON-LD, the headings outline and the links. The endpoin
 is public, so you can call it yourself:
 
 ```bash
-curl -s 'https://www.skabene.id.lv/demo/scrape/api/extract?url=https%3A%2F%2Fquotes.toscrape.com%2F&pretty=1'
+curl -s 'https://urlapi.skabene.id.lv/api/extract?url=https%3A%2F%2Fquotes.toscrape.com%2F&pretty=1'
 ```
 
-Served at **https://www.skabene.id.lv/demo/scrape/**. It is deterministic: no AI, no analytics,
+Served at **https://urlapi.skabene.id.lv/**. It is deterministic: no AI, no analytics,
 no third-party requests from the browser.
 
 ## API
 
-`GET /demo/scrape/api/extract`
+`GET /api/extract`
 
 | param    | |
 |----------|---|
@@ -26,7 +26,7 @@ Success returns `{ ok: true, url, finalUrl, status, redirects, bytes, timing, ca
 Failure returns `{ ok: false, error: { code, message } }` with a status that means something:
 400 for a refused or invalid address, 415 for non-HTML, 413 for over 2 MB, 429 when rate
 limited (with `Retry-After`), 502 for upstream errors, 503 when busy and 504 on timeout.
-`GET /demo/scrape/api` describes the parameters and limits. `GET /demo/scrape/healthz` returns `ok`.
+`GET /api` describes the parameters and limits. `GET /healthz` returns `ok`.
 
 ## The SSRF guard
 
@@ -61,17 +61,17 @@ Needs Node 22 and pnpm 10.
 pnpm install
 pnpm build            # typecheck + vite build + server compile (the dev server reads dist/public for static files)
 pnpm dev:server       # API on :3103 (tsx watch)
-pnpm dev:web          # Vite on :5173 → http://localhost:5173/demo/scrape/
+pnpm dev:web          # Vite on :5173 → http://localhost:5173/
 pnpm test             # vitest: guard, fetcher (against a local server), extractor, limits, CSV
 ```
 
-In dev, Vite proxies `/demo/scrape/api` to `:3103`, and `/theme.css` to the live site so the page
+In dev, Vite proxies `/api` to `:3103`, and `/theme.css` to the live site so the page
 picks up the shell's tokens. The page's own CSS stands on its own when theme.css is missing.
 
 Production locally:
 
 ```bash
-pnpm build && PORT=3103 node dist/server/index.js   # → http://127.0.0.1:3103/demo/scrape/
+pnpm build && PORT=3103 node dist/server/index.js   # → http://127.0.0.1:3103/
 ```
 
 ## Deploy (VPS)
@@ -82,11 +82,11 @@ docker compose up -d --build        # builds cosmic-demo-scrape:latest, runs dem
 
 The container publishes on **`127.0.0.1:3103` only**. Never use a bare `3103:3103`, because
 Docker's DNAT bypasses ufw. It runs as `node`, with a read-only root filesystem, a `/tmp` tmpfs,
-`no-new-privileges` and a 256 MB memory limit. Caddy must pass the full path through without
-stripping the prefix:
+`no-new-privileges` and a 256 MB memory limit. Caddy fronts it on its own host:
 
 ```caddy
-handle /demo/scrape/* {
+urlapi.skabene.id.lv {
+    request_header -X-Forwarded-For
     reverse_proxy 127.0.0.1:3103
 }
 ```

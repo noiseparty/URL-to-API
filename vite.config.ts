@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 
-const BASE = "/demo/scrape/";
+const BASE = "/";
 const API_PORT = Number(process.env.API_PORT ?? 3103);
 
 export default defineConfig({

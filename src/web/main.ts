@@ -11,7 +11,7 @@ import { listToCsv, toCsv } from "./csv";
 import { highlightJson } from "./json-view";
 import type { ApiError, ExtractResult, ListOut, TableOut } from "./types";
 
-const BASE = import.meta.env.BASE_URL; // "/demo/scrape/"
+const BASE = import.meta.env.BASE_URL; // "/"
 const API = `${BASE}api/extract`;
 
 const SAMPLES = [

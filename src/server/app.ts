@@ -11,7 +11,8 @@ import { FetchError, fetchPage, type FetchOptions } from "./fetcher.js";
 import { extract, type Extracted } from "./extract.js";
 import { clientIp, Concurrency, LruCache, TokenBucket } from "./limits.js";
 
-export const BASE = "/demo/scrape";
+/** Served at the root of urlapi.skabene.id.lv. Set a prefix here to mount it under a path. */
+export const BASE = "";
 
 const MAX_URL = 4096;
 const SECTIONS = ["title", "meta", "jsonLd", "tables", "lists", "headings", "links"] as const;
@@ -244,7 +245,7 @@ export function createApp(opts: AppOptions) {
       const u = new URL(rawUrl, "http://local");
       const path = u.pathname;
 
-      if (path === "/" || path === BASE) {
+      if (BASE && (path === "/" || path === BASE)) {
         res.writeHead(302, { Location: `${BASE}/` });
         return res.end();
       }
