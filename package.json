@@ -1,0 +1,34 @@
+{
+  "name": "cosmic-demo-scrape",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site to API — paste a URL, get a clean JSON API of what's on the page. A Cosmic demo.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:web": "vite",
+    "build": "pnpm run typecheck && vite build && tsc -p tsconfig.server.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "start": "node dist/server/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "domhandler": "^5.0.3",
+    "ipaddr.js": "^2.5.0"
+  },
+  "devDependencies": {
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  },
+  "packageManager": "pnpm@10.29.1"
+}

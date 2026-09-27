@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Site to API — Cosmic demo</title>
+    <meta name="description" content="Paste a URL, get a clean JSON API of what's on the page: tables, repeated lists, metadata and JSON-LD. A live demo by Cosmic, an independent software studio in Riga." />
+    <meta property="og:title" content="Site to API — Cosmic demo" />
+    <meta property="og:description" content="Paste a URL, get a clean JSON API of what's on the page." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.skabene.id.lv/demo/scrape/" />
+    <meta name="theme-color" content="#03040a" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/demo/scrape/favicon.svg" type="image/svg+xml" />
+    <!-- Served by the shell on the same origin; the page's own CSS stands on its own if this fails. -->
+    <link rel="stylesheet" href="/theme.css" vite-ignore />
+  </head>
+  <body class="demo">
+    <div class="grain" aria-hidden="true"></div>
+    <a class="skip" href="#tool">Skip to the tool</a>
+
+    <header class="topbar">
+      <a class="wordmark" href="https://www.skabene.id.lv/" aria-label="Cosmic — back to the portfolio">
+        <span class="wordmark-name">Cosmic</span><span class="wordmark-sub">/ Demo</span>
+      </a>
+      <a class="label nav-link" href="https://www.skabene.id.lv/#work">← All work</a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <p class="kicker label"><i aria-hidden="true"></i>Demo 03 / Data extraction / APIs</p>
+        <h1 id="title" class="display">Site <span class="display-arrow" aria-hidden="true">→</span><span class="sr-only">to</span> API</h1>
+        <p class="lede">
+          Paste a public web page. The server fetches it, parses the HTML and hands back its tables,
+          repeated lists and metadata as clean JSON — at an endpoint you can call yourself.
+        </p>
+      </section>
+
+      <section id="tool" class="panel tool" aria-label="Extractor">
+        <form id="form" class="url-form" novalidate>
+          <label class="label field-label" for="url">Page URL</label>
+          <div class="url-row">
+            <input id="url" name="url" type="url" inputmode="url" autocomplete="url" spellcheck="false"
+              placeholder="https://en.wikipedia.org/wiki/List_of_largest_cities" required
+              aria-describedby="url-hint" />
+            <button id="go" class="btn btn-primary" type="submit"><span>Extract</span><span aria-hidden="true">→</span></button>
+          </div>
+          <p id="url-hint" class="hint">Public http(s) pages only · 8 s · 2 MB · 10 fresh pages a minute</p>
+        </form>
+
+        <div class="chip-rows">
+          <div class="chip-row">
+            <span class="label chip-label" id="samples-label">Try a sample</span>
+            <div class="chips" id="samples" role="group" aria-labelledby="samples-label"></div>
+          </div>
+          <div class="chip-row">
+            <span class="label chip-label" id="attacks-label">Or try to break it</span>
+            <div class="chips" id="attacks" role="group" aria-labelledby="attacks-label"></div>
+          </div>
+        </div>
+
+        <div class="endpoint" aria-label="Use it as an API">
+          <div class="endpoint-row">
+            <span class="label endpoint-k">Endpoint</span>
+            <code id="endpoint" class="endpoint-v"></code>
+            <button class="btn btn-small" type="button" data-copy="endpoint">Copy</button>
+          </div>
+          <div class="endpoint-row">
+            <span class="label endpoint-k">curl</span>
+            <code id="curl" class="endpoint-v"></code>
+            <button class="btn btn-small" type="button" data-copy="curl">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="panel results" aria-label="Results" aria-live="polite" aria-busy="false"></section>
+
+      <section class="panel how" aria-labelledby="how-title">
+        <div class="how-head">
+          <h2 id="how-title" class="label section-title"><i aria-hidden="true"></i>How it works</h2>
+          <p class="how-note">A public server that fetches any URL a stranger types is a classic way into a private network. Most of this app is the guard.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="step-n">01</span>
+            <h3 class="label">Check the address</h3>
+            <p>http and https only, ports 80 and 443 only, no <code>user:pass@</code>. Odd IPv4 spellings — <code>2130706433</code>, <code>0177.0.0.1</code>, <code>0x7f.1</code> — are normalised by the URL parser before anything is compared, so they can't sneak past as "not an IP".</p>
+          </li>
+          <li>
+            <span class="step-n">02</span>
+            <h3 class="label">Resolve, vet, pin</h3>
+            <p>DNS is resolved on the server and <em>every</em> answer must be public unicast: loopback, RFC 1918, link-local and the <code>169.254.169.254</code> metadata service, CGNAT, multicast, reserved, ULA and IPv4-mapped IPv6 are refused. The socket is then pinned to the vetted IP, so a second DNS answer can't swap it (rebinding).</p>
+          </li>
+          <li>
+            <span class="step-n">03</span>
+            <h3 class="label">Fetch under limits</h3>
+            <p>At most 3 redirects, each followed by hand and re-vetted from step 01. 8 seconds in total, 2 MB streamed then cut off, HTML content types only. The peer address is checked once more after connecting. Per-visitor rate limit, 4 fetches at once, 5-minute cache.</p>
+          </li>
+          <li>
+            <span class="step-n">04</span>
+            <h3 class="label">Parse like a browser</h3>
+            <p>HTML5 parsing via cheerio/parse5. Tables are expanded through <code>rowspan</code>/<code>colspan</code> so cells line up with their headers. Siblings sharing a tag + class signature, three or more, become record lists, ranked by content. No AI — the same page gives the same JSON.</p>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span class="label">Built by Cosmic · Riga</span>
+      <a class="label nav-link" href="https://www.skabene.id.lv/#contact">Start a project →</a>
+    </footer>
+
+    <script type="module" src="/src/web/main.ts"></script>
+  </body>
+</html>

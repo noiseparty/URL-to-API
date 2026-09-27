@@ -1,0 +1,18 @@
+services:
+  scrape:
+    build: .
+    image: cosmic-demo-scrape:latest
+    container_name: demo-scrape
+    restart: unless-stopped
+    mem_limit: 256m
+    environment:
+      - PORT=3103
+    # Loopback only. A bare "3103:3103" is published to the internet: Docker's DNAT
+    # bypasses ufw entirely. Caddy on the host is the only way in.
+    ports:
+      - "127.0.0.1:3103:3103"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
