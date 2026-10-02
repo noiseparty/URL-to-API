@@ -1,4 +1,4 @@
-# Site to API — Cosmic demo 03
+# Site to API — Repo demo 03
 
 Paste a URL and get a clean JSON API of what's on the page: every data `<table>` as an array of
 row objects keyed by header, repeated card/list structures as `{text, links, images}` records,
@@ -6,10 +6,10 @@ title, meta, OpenGraph, JSON-LD, the headings outline and the links. The endpoin
 is public, so you can call it yourself:
 
 ```bash
-curl -s 'https://urlapi.skabene.id.lv/api/extract?url=https%3A%2F%2Fquotes.toscrape.com%2F&pretty=1'
+curl -s 'https://urlapi.repo.lv/api/extract?url=https%3A%2F%2Fquotes.toscrape.com%2F&pretty=1'
 ```
 
-Served at **https://urlapi.skabene.id.lv/**. It is deterministic: no AI, no analytics,
+Served at **https://urlapi.repo.lv/**. It is deterministic: no AI, no analytics,
 no third-party requests from the browser.
 
 ## API
@@ -48,7 +48,7 @@ Postgres, loopback services and a metadata endpoint. `src/server/guard.ts` and
   check.
 - **Limits.** 8 s in total, 2 MB streamed and then aborted (counted *after* decompression, so
   a gzip bomb is caught), `text/html` and `application/xhtml+xml` only, and the honest
-  User-Agent `CosmicDemoBot/1.0 (+https://www.skabene.id.lv)`.
+  User-Agent `RepoDemoBot/1.0 (+https://www.repo.lv)`.
 - **Abuse.** Each IP gets a token bucket of 10 per minute, keyed on the first `X-Forwarded-For`
   entry. At most 4 fetches run at once, and a 50-entry LRU cache keeps results for 5 minutes.
   Cache hits don't count against the limit. The API accepts only GET, with no body.
@@ -85,7 +85,7 @@ Docker's DNAT bypasses ufw. It runs as `node`, with a read-only root filesystem,
 `no-new-privileges` and a 256 MB memory limit. Caddy fronts it on its own host:
 
 ```caddy
-urlapi.skabene.id.lv {
+urlapi.repo.lv {
     request_header -X-Forwarded-For
     reverse_proxy 127.0.0.1:3103
 }

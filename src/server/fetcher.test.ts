@@ -93,7 +93,7 @@ describe("fetchPage", () => {
     expect(page.status).toBe(200);
     expect(page.html).toContain("<title>Hi</title>");
     expect(page.remoteAddress).toBe("127.0.0.1");
-    expect(lastUserAgent).toBe("CosmicDemoBot/1.0 (+https://www.skabene.id.lv)");
+    expect(lastUserAgent).toBe("RepoDemoBot/1.0 (+https://www.repo.lv)");
   });
 
   it("decompresses gzip and decodes the declared charset", async () => {

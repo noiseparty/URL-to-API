@@ -101,7 +101,7 @@ describe("metadata", () => {
       <meta name="description" content="A page">
       <meta property="og:title" content="OG Hello"><meta property="og:image" content="https://e.com/i.png">
       <link rel="canonical" href="/canon">
-      <script type="application/ld+json">{"@type":"Organization","name":"Cosmic"}</script>
+      <script type="application/ld+json">{"@type":"Organization","name":"Repo"}</script>
       <script type="application/ld+json">{broken</script>`;
     const d = extract(page("<h1>Top</h1><h2 id='s'>Sub</h2>", head), "https://e.com/x");
     expect(d.title).toBe("Hello World");
@@ -109,7 +109,7 @@ describe("metadata", () => {
     expect(d.meta.openGraph).toEqual({ title: "OG Hello", image: "https://e.com/i.png" });
     expect(d.meta.canonical).toBe("https://e.com/canon");
     expect(d.meta.lang).toBe("en");
-    expect(d.jsonLd[0]).toEqual({ "@type": "Organization", name: "Cosmic" });
+    expect(d.jsonLd[0]).toEqual({ "@type": "Organization", name: "Repo" });
     expect(d.jsonLd[1]).toMatchObject({ _error: expect.any(String) });
     expect(d.headings).toEqual([
       { level: 1, text: "Top", id: null },

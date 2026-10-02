@@ -11,7 +11,7 @@ import { FetchError, fetchPage, type FetchOptions } from "./fetcher.js";
 import { extract, type Extracted } from "./extract.js";
 import { clientIp, Concurrency, LruCache, TokenBucket } from "./limits.js";
 
-/** Served at the root of urlapi.skabene.id.lv. Set a prefix here to mount it under a path. */
+/** Served at the root of urlapi.repo.lv. Set a prefix here to mount it under a path. */
 export const BASE = "";
 
 const MAX_URL = 4096;

@@ -15,7 +15,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       // The shell serves theme.css on the same origin in production; borrow the live copy in dev.
-      "/theme.css": { target: "https://www.skabene.id.lv", changeOrigin: true },
+      "/theme.css": { target: "https://www.repo.lv", changeOrigin: true },
       [`${BASE}api`]: { target: `http://127.0.0.1:${API_PORT}` },
       [`${BASE}healthz`]: { target: `http://127.0.0.1:${API_PORT}` },
     },

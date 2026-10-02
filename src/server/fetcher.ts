@@ -15,7 +15,7 @@ import { createBrotliDecompress, createGunzip, createInflate } from "node:zlib";
 import type { Readable } from "node:stream";
 import { checkUrl, GuardError, isPublicAddress, resolveHost, systemResolver, type Resolver } from "./guard.js";
 
-export const USER_AGENT = "CosmicDemoBot/1.0 (+https://www.skabene.id.lv)";
+export const USER_AGENT = "RepoDemoBot/1.0 (+https://www.repo.lv)";
 
 export interface FetchLimits {
   timeoutMs: number;
