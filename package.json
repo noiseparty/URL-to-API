@@ -1,5 +1,5 @@
 {
-  "name": "cosmic-demo-scrape",
+  "name": "repo-demo-scrape",
   "version": "1.0.0",
   "private": true,
   "description": "Site to API — paste a URL, get a clean JSON API of what's on the page. A Repo demo.",

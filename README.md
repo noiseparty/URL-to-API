@@ -77,7 +77,7 @@ pnpm build && PORT=3103 node dist/server/index.js   # → http://127.0.0.1:3103/
 ## Deploy (VPS)
 
 ```bash
-docker compose up -d --build        # builds cosmic-demo-scrape:latest, runs demo-scrape
+docker compose up -d --build        # builds repo-demo-scrape:latest, runs demo-scrape
 ```
 
 The container publishes on **`127.0.0.1:3103` only**. Never use a bare `3103:3103`, because
